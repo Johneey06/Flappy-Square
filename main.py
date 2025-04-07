@@ -1,12 +1,11 @@
 from game import Game
 
 '''
-TODO 
+TODO      
 
-Add point scoring
+prevent holding space key jump
 death screen and title screen
-lose if touch top or bottom
-spawn pipe immediately when game start
+add enemies coming at you
 
 '''
 

@@ -8,14 +8,16 @@ class PipesEntity:
         self.pipe_gap = 150
         self.pipe_velocity = 3
         self.pipes = []
-    
+
+        
+
     def generate_pipe(self, screen_height, screen_width):
         # y position of where gap starts
         gap_y = random.randint(0, screen_height - self.pipe_gap)
 
         top_pipe = pygame.Rect(screen_width, gap_y - screen_height, self.pipe_width, screen_height)
         bottom_pipe = pygame.Rect(screen_width, gap_y + self.pipe_gap, self.pipe_width, screen_height)
-
+        
         self.pipes.append((top_pipe, bottom_pipe))
 
     def draw_pipes(self, screen):
