@@ -22,13 +22,17 @@ class Game:
         self.pipes = PipesEntity()
         
         self.running = True
+        self.death_screen = False
 
         self.score = 0
 
-        # Text
+        # Score Text
         self.font = pygame.font.Font(None, 74)
         self.color = (0, 0, 0)
-        self.text_surface = self.font.render(str(self.score), True, self.color)
+        self.score_text = self.font.render(str(self.score), True, self.color)
+
+        # Death Screen Text
+        self.death_text = self.font.render("You died", True, self.color)
 
         self.passed_pipe = False
 
@@ -55,6 +59,14 @@ class Game:
         if self.square.square.x <= self.pipes.pipes[0][0].x:
             self.passed_pipe = False
 
+    def draw(self):
+        self.screen.fill((135, 206, 250)) 
+        self.square.draw_square(self.screen)
+        self.pipes.draw_pipes(self.screen)
+
+        self.score_text = self.font.render(str(self.score), True, self.color)
+        self.screen.blit(self.score_text, (10, 0))
+        pygame.display.update()
 
     def run(self):
         while self.running:
@@ -64,36 +76,43 @@ class Game:
                 if event.type == pygame.QUIT:
                     self.running = False
             
-            self.square.handle_jump()
+            # Fix Death Screen
+            if self.death_screen:
+                self.square = Square()
+                self.pipes = PipesEntity()
+                keys = pygame.key.get_pressed()
+                if keys[pygame.K_SPACE]: 
+                    self.death_screen = False
+                self.screen.fill((255, 0, 0))
+                self.screen.blit(self.death_text, (self.screen_width / 2, self.screen_height / 2))
+                pygame.display.update()
+                self.last_pipe_time = pygame.time.get_ticks() 
 
-            # Update square position and pipes
-            self.square.update_square()
-            self.pipes.update_pipes()
+            else:
+                self.square.handle_jump()
 
-            if self.check_death_collision():
-                self.running = False
-            
-            
-            if len(self.pipes.pipes) == 0:
-                self.pipes.generate_pipe(self.screen_height, self.screen_width)
+                # Update square position and pipes
+                self.square.update_square()
+                self.pipes.update_pipes()
 
-            # Generate new pipes periodically
-            current_time = pygame.time.get_ticks()
-            if current_time - self.last_pipe_time > self.pipe_interval:
-                self.pipes.generate_pipe(self.screen_height, self.screen_width)
-                self.last_pipe_time = current_time
+                if self.check_death_collision():
+                    self.death_screen = True
 
-            self.score_collision()
-            self.draw()
+                        
+                
+                if len(self.pipes.pipes) == 0:
+                    self.pipes.generate_pipe(self.screen_height, self.screen_width)
 
-    def draw(self):
-        self.screen.fill((135, 206, 250)) 
-        self.square.draw_square(self.screen)
-        self.pipes.draw_pipes(self.screen)
+                # Generate new pipes periodically
+                current_time = pygame.time.get_ticks()
+                if current_time - self.last_pipe_time > self.pipe_interval:
+                    self.pipes.generate_pipe(self.screen_height, self.screen_width)
+                    self.last_pipe_time = current_time
 
-        self.text_surface = self.font.render(str(self.score), True, self.color)
-        self.screen.blit(self.text_surface, (10, 0))
-        pygame.display.update()
+                self.score_collision()
+                self.draw()
+        
+
 
     def quit(self):
         pygame.quit()
