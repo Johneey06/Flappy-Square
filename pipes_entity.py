@@ -6,10 +6,8 @@ class PipesEntity:
     # Initialize pipe attributes
         self.pipe_width = 60
         self.pipe_gap = 150
-        self.pipe_velocity = 3
+        self.pipe_velocity = 180
         self.pipes = []
-
-        
 
     def generate_pipe(self, screen_height, screen_width):
         # y position of where gap starts
@@ -25,10 +23,10 @@ class PipesEntity:
             pygame.draw.rect(screen, (0, 255, 0), top_pipe)
             pygame.draw.rect(screen, (0, 255, 0), bottom_pipe)
 
-    def update_pipes(self):
+    def update_pipes(self, dt):
         for top_pipe, bottom_pipe in self.pipes:
-            top_pipe.x -= self.pipe_velocity
-            bottom_pipe.x -= self.pipe_velocity
+            top_pipe.x -= self.pipe_velocity * dt
+            bottom_pipe.x -= self.pipe_velocity * dt
 
         # Remove off-screen pipes
         self.pipes = [pipe for pipe in self.pipes if pipe[0].x > -self.pipe_width]
